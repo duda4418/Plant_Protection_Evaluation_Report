@@ -1,0 +1,164 @@
+{
+  "report_metadata": {
+    "report_id": "FCSA-PPR-2026-0042",
+    "report_title": "Plant Protection Product Evaluation Report",
+    "issuing_authority": "Fictional Crop Science Authority (FCSA)",
+    "issued_on": "2026-04-18",
+    "language_locale": "en-EU",
+    "version": "1.0",
+    "classification": "internal"
+  },
+  "products": [
+    {
+      "product_id": "FCSA-PROD-AS250",
+      "product_name": "AgriShield 250 EC",
+      "active_substance": "Fictoxazole",
+      "active_substance_concentration": {
+        "value": 250,
+        "unit": "g/L"
+      },
+      "formulation_type": "EC",
+      "formulation_type_long": "Emulsifiable concentrate",
+      "manufacturer": "Demo CropChem GmbH",
+      "country": "DE",
+      "approval_status": "conditional",
+      "approval_period": {
+        "valid_from": "2025-01-01",
+        "valid_to": "2027-12-31"
+      },
+      "risk_score": 78,
+      "risk_components": {
+        "human_health": 45,
+        "ecotoxicology": 82,
+        "environmental_fate": 78,
+        "residue_in_food": 30
+      },
+      "applications": [
+        {
+          "crop": "Winter wheat",
+          "target_pest": "Septoria tritici",
+          "growth_stage_bbch": "31-39",
+          "dose": 1.0,
+          "dose_unit": "L/ha",
+          "max_applications_per_season": 2,
+          "efficacy_percent": 88,
+          "preharvest_interval_days": 35
+        },
+        {
+          "crop": "Winter barley",
+          "target_pest": "Ramularia collo-cygni",
+          "growth_stage_bbch": "37-49",
+          "dose": 1.25,
+          "dose_unit": "L/ha",
+          "max_applications_per_season": 2,
+          "efficacy_percent": 84,
+          "preharvest_interval_days": 35
+        },
+        {
+          "crop": "Winter oilseed rape",
+          "target_pest": "Phoma lingam",
+          "growth_stage_bbch": "14-20",
+          "dose": 0.8,
+          "dose_unit": "L/ha",
+          "max_applications_per_season": 1,
+          "efficacy_percent": 79,
+          "preharvest_interval_days": 56
+        }
+      ],
+      "toxicity_indicators": {
+        "ld50_oral_rat_mg_per_kg": 1450,
+        "ld50_dermal_rat_mg_per_kg": 2000,
+        "fish_lc50_96h_mg_per_l": 0.89,
+        "bee_ld50_oral_microg_per_bee": 12.4,
+        "earthworm_lc50_14d_mg_per_kg": 145
+      },
+      "restrictions": [
+        "Do not apply within 10 m of surface water bodies.",
+        "Use closed-cab application equipment.",
+        "Maximum two applications per growing season.",
+        "Field re-entry only after spray deposit has dried."
+      ],
+      "environmental_notes": [
+        "Persistent in soil under cool, dry conditions; field DT50 = 92 days.",
+        "Low risk of leaching to groundwater under typical European conditions.",
+        "Moderate risk to non-target arthropods at edge-of-field."
+      ],
+      "references": [
+        {
+          "source": "EFSA Journal (fictional)",
+          "id": "FIC-2026-12345"
+        }
+      ]
+    },
+    {
+      "product_id": "FCSA-PROD-VR075",
+      "product_name": "Verdura 75 WG",
+      "active_substance": "Lumicarb-methyl",
+      "active_substance_concentration": {
+        "value": 750,
+        "unit": "g/kg"
+      },
+      "formulation_type": "WG",
+      "formulation_type_long": "Water-dispersible granules",
+      "manufacturer": "Demo CropChem GmbH",
+      "country": "FR",
+      "approval_status": "approved",
+      "approval_period": {
+        "valid_from": "2024-06-01",
+        "valid_to": "2029-05-31"
+      },
+      "risk_score": 42,
+      "risk_components": {
+        "human_health": 38,
+        "ecotoxicology": 51,
+        "environmental_fate": 36,
+        "residue_in_food": 44
+      },
+      "applications": [
+        {
+          "crop": "Tomato (greenhouse)",
+          "target_pest": "Botrytis cinerea",
+          "growth_stage_bbch": "61-89",
+          "dose": 0.6,
+          "dose_unit": "kg/ha",
+          "max_applications_per_season": 3,
+          "efficacy_percent": 91,
+          "preharvest_interval_days": 7
+        },
+        {
+          "crop": "Grapevine",
+          "target_pest": "Erysiphe necator (powdery mildew)",
+          "growth_stage_bbch": "53-81",
+          "dose": 0.4,
+          "dose_unit": "kg/ha",
+          "max_applications_per_season": 4,
+          "efficacy_percent": 87,
+          "preharvest_interval_days": 21
+        }
+      ],
+      "toxicity_indicators": {
+        "ld50_oral_rat_mg_per_kg": 3200,
+        "ld50_dermal_rat_mg_per_kg": 5000,
+        "fish_lc50_96h_mg_per_l": 4.6,
+        "bee_ld50_oral_microg_per_bee": 89.0,
+        "earthworm_lc50_14d_mg_per_kg": 480
+      },
+      "restrictions": [],
+      "environmental_notes": [
+        "Rapid degradation in soil; field DT50 = 8 days.",
+        "Low bioaccumulation potential.",
+        "Acceptable risk to bees under good agricultural practice."
+      ],
+      "references": [
+        {
+          "source": "EU Pesticides Database (fictional)",
+          "id": "FIC-EUPD-2024-00911"
+        }
+      ]
+    }
+  ],
+  "footer": {
+    "classification": "internal",
+    "disclaimer": "Fictional dataset for recruiting use only. Not a real regulatory record."
+  }
+}

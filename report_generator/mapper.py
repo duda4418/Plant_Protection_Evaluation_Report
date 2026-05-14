@@ -78,7 +78,7 @@ def _map_product(product: Product, chart_path: Path | None) -> dict:
         "formulation": f"{product.formulation_type} - {product.formulation_type_long}",
         "manufacturer": product.manufacturer,
         "country": product.country,
-        "approval_status": product.approval_status,
+        "approval_status": product.approval_status.value,
         "approval_line": _format_approval_line(product, is_german),
         "risk_score": product.risk_score,
         "show_high_risk_notice": should_show_high_risk_notice(product.risk_score),
@@ -107,11 +107,11 @@ def _format_approval_line(product: Product, is_german: bool) -> str:
     valid_to = format_date(product.approval_period.valid_to)
     if is_german:
         return (
-            f"Germany: Zugelassen gem. PflSchG - Status: {product.approval_status}. "
+            f"Germany: Zugelassen gem. PflSchG - Status: {product.approval_status.value}. "
             f"Valid from {valid_from} to {valid_to}."
         )
     return (
-        f"Country: {product.country}. Status: {product.approval_status}. "
+        f"Country: {product.country}. Status: {product.approval_status.value}. "
         f"Valid from {valid_from} to {valid_to}."
     )
 

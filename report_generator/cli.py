@@ -17,7 +17,7 @@ from .template_builder import build_default_template
 
 
 class CliError(RuntimeError):
-    pass
+    """Raised when the command-line workflow cannot continue."""
 
 
 def build_parser() -> argparse.ArgumentParser:

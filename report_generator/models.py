@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Literal
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-ApprovalStatus = Literal["approved", "conditional", "rejected", "expired"]
+
+class ApprovalStatus(StrEnum):
+    APPROVED = "approved"
+    CONDITIONAL = "conditional"
+    REJECTED = "rejected"
+    EXPIRED = "expired"
 
 
 class StrictModel(BaseModel):

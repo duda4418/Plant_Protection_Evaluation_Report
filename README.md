@@ -9,7 +9,6 @@ This repository contains a small document automation prototype for generating a 
 - docxtpl and Jinja2 for DOCX template rendering
 - python-docx for generating the reusable DOCX template structure
 - matplotlib for efficacy charts
-- python-pptx for the short approach slide deck
 
 ## One-Command Run
 
@@ -25,7 +24,6 @@ The command creates or updates these outputs:
 
 - `templates/report_template.docx`
 - `generated/report.docx`
-- `slides/approach.pptx`
 - `build/charts/*.png`
 
 To rebuild the template explicitly:
@@ -45,7 +43,6 @@ python -m report_generator --input path\to\input_data.json --output generated\cu
 - Input data: `data/input_data.json`
 - DOCX template: `templates/report_template.docx`
 - Generated report: `generated/report.docx`
-- Generated slides: `slides/approach.pptx`
 - Temporary chart images: `build/charts/`
 
 ## Architecture

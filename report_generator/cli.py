@@ -12,7 +12,6 @@ from .charts import generate_efficacy_chart
 from .mapper import map_report
 from .models import ReportInput
 from .renderer import RenderError, render_report
-from .slides import generate_approach_slides
 from .template_builder import build_default_template
 
 
@@ -42,17 +41,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Directory for generated chart images.",
     )
     parser.add_argument(
-        "--slides-output",
-        type=Path,
-        default=Path("slides/approach.pptx"),
-        help="Path for the generated approach slide deck.",
-    )
-    parser.add_argument(
         "--rebuild-template",
         action="store_true",
         help="Recreate the default DOCX template before rendering.",
     )
-    parser.add_argument("--skip-slides", action="store_true", help="Do not generate the approach slide deck.")
     return parser
 
 
@@ -83,13 +75,8 @@ def run(args: argparse.Namespace) -> None:
     context = map_report(report, chart_paths)
     render_report(context, args.template, args.output)
 
-    if not args.skip_slides:
-        generate_approach_slides(args.slides_output)
-
     print(f"Generated report: {args.output}")
     print(f"Generated template: {args.template}")
-    if not args.skip_slides:
-        print(f"Generated slides: {args.slides_output}")
 
 
 def load_json(path: Path) -> dict:

@@ -2,4 +2,3 @@ docxtpl
 pydantic
 matplotlib
 python-docx
-python-pptx

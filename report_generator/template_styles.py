@@ -128,12 +128,13 @@ def style_warning_cell(cell) -> None:
     style_cell_text(cell, color=TEXT_DARK, bold=False, size=8)
 
 
-def style_cell_text(cell, *, color: str, bold: bool, size: int = 8) -> None:
+def style_cell_text(cell, *, color: str, bold: bool, size: int = 8, italic: bool = False) -> None:
     for paragraph in cell.paragraphs:
         paragraph.paragraph_format.space_before = Pt(0)
         paragraph.paragraph_format.space_after = Pt(1)
         for run in paragraph.runs:
             style_run(run, color=color, size=size, bold=bold)
+            run.italic = italic
 
 
 def shade_cell(cell, fill: str) -> None:

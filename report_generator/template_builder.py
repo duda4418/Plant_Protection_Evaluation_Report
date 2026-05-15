@@ -12,13 +12,14 @@ from .template_styles import (
     BRAND_NAVY,
     BRAND_ORANGE,
     DARK_RED,
+    TEXT_DARK,
     TEXT_MUTED,
     configure_document_theme,
     set_paragraph_bottom_border,
+    style_cell_text,
     style_run,
     style_metric_table,
     style_summary_table,
-    style_table_body,
     style_table_header,
     style_warning_cell,
 )
@@ -107,7 +108,11 @@ def _add_title_page(document: Document) -> None:
     summary_box.style = "Table Grid"
     summary_box.rows[0].cells[0].text = ""
     summary_cell = summary_box.rows[0].cells[1]
-    summary_cell.text = "Overall summary. {{ summary.summary_text }}"
+    summary_cell.paragraphs[0].clear()
+    summary_bold_run = summary_cell.paragraphs[0].add_run("Overall summary.")
+    style_run(summary_bold_run, color=TEXT_DARK, size=8, bold=True)
+    summary_text_run = summary_cell.paragraphs[0].add_run(" {{ summary.summary_text }}")
+    style_run(summary_text_run, color=TEXT_DARK, size=8)
     style_summary_table(summary_box)
 
     document.add_page_break()
@@ -140,17 +145,25 @@ def _add_products_section(document: Document) -> None:
 def _add_product_overview(document: Document) -> None:
     facts = document.add_paragraph()
     facts.paragraph_format.space_after = Pt(2)
-    facts.add_run(
-        "Active substance: {{ product.active_substance }} ({{ product.concentration }}) · Formulation: {{ product.formulation_display }} · Manufacturer: {{ product.manufacturer }}"
-    )
+    facts.add_run("Active substance: ")
+    active_sub_run = facts.add_run("{{ product.active_substance }}")
+    style_run(active_sub_run, color=TEXT_DARK, size=8, bold=True)
+    facts.add_run(" ({{ product.concentration }}) · Formulation: {{ product.formulation_display }} · Manufacturer: {{ product.manufacturer }}")
 
     approval = document.add_paragraph()
     approval.paragraph_format.space_after = Pt(8)
-    approval.add_run("{{ product.approval_summary }}")
+    approval_run = approval.add_run("{{ product.approval_summary }}")
+    style_run(approval_run, color=BRAND_NAVY, size=8)
+    approval_run.italic = True
 
     registration = document.add_paragraph()
     registration.paragraph_format.space_after = Pt(12)
-    registration.add_run("{{ product.registration_summary }}")
+    reg_prefix_run = registration.add_run("{{ product.registration_prefix }}")
+    style_run(reg_prefix_run, color=TEXT_DARK, size=8)
+    reg_bold_run = registration.add_run("{{ product.average_efficacy }}")
+    style_run(reg_bold_run, color=TEXT_DARK, size=8, bold=True)
+    reg_suffix_run = registration.add_run(".")
+    style_run(reg_suffix_run, color=TEXT_DARK, size=8)
 
 
 def _add_high_risk_notice(document: Document) -> None:
@@ -192,7 +205,7 @@ def _add_restrictions_section(document: Document) -> None:
     document.add_paragraph("{%p if product.show_restrictions %}")
     document.add_heading("{{ product.restrictions_heading }}", level=2)
     document.add_paragraph("{%p for restriction in product.restrictions %}")
-    document.add_paragraph("- {{ restriction }}")
+    document.add_paragraph("• {{ restriction }}")
     document.add_paragraph("{%p endfor %}")
     document.add_paragraph("{%p endif %}")
 
@@ -200,7 +213,7 @@ def _add_restrictions_section(document: Document) -> None:
 def _add_environmental_notes_section(document: Document) -> None:
     document.add_heading("Environmental notes", level=2)
     document.add_paragraph("{%p for note in product.environmental_notes %}")
-    document.add_paragraph("- {{ note }}")
+    document.add_paragraph("• {{ note }}")
     document.add_paragraph("{%p endfor %}")
 
 
@@ -226,6 +239,8 @@ def _add_applications_table(document: Document) -> None:
         cell.text = value
     table.rows[3].cells[0].text = "{%tr endfor %}"
     style_metric_table(table)
+    # Make target_pest column italic in the data row (applied after style_metric_table to avoid override)
+    style_cell_text(table.rows[2].cells[1], color=TEXT_DARK, bold=False, size=7, italic=True)
 
 
 def _add_risk_table(document: Document) -> None:
@@ -245,4 +260,4 @@ def _add_toxicity_table(document: Document) -> None:
     table.rows[1].cells[0].text = "{{ row.indicator }}"
     table.rows[1].cells[1].text = "{{ row.value }}"
     table.rows[2].cells[0].text = "{%tr endfor %}"
-    style_table_body(table)
+    style_metric_table(table)

@@ -92,6 +92,7 @@ def _map_product(product: Product, chart_path: Path | None) -> dict:
         "application_count": len(product.applications),
         "average_efficacy": format_percent(calculate_product_average_efficacy(product.applications)),
         "registration_summary": _format_registration_summary(product),
+        "registration_prefix": _format_registration_prefix(product),
         "applications": _map_applications(product.applications),
         "toxicity_rows": _map_toxicity_rows(product),
         "risk_component_rows": _map_risk_component_rows(product),
@@ -119,11 +120,11 @@ def _format_approval_line(product: Product, is_german: bool) -> str:
     valid_to = format_date(product.approval_period.valid_to)
     if is_german:
         return (
-            f"Germany: Zugelassen gem. PflSchG - Status: {product.approval_status.value}. "
+            f"Germany: Zugelassen gem. PflSchG — Status: {product.approval_status.value}. "
             f"Valid from {valid_from} to {valid_to}."
         )
     return (
-        f"Country: {product.country}. Status: {product.approval_status.value}. "
+        f"Country: {product.country} · Status: {product.approval_status.value}. "
         f"Valid from {valid_from} to {valid_to}."
     )
 
@@ -133,11 +134,11 @@ def _format_approval_summary(product: Product, is_german: bool) -> str:
     valid_to = format_date(product.approval_period.valid_to)
     if is_german:
         return (
-            f"Germany: Zugelassen gem. PflSchG - Status: {product.approval_status.value}. "
+            f"Germany: Zugelassen gem. PflSchG — Status: {product.approval_status.value}. "
             f"Valid from {valid_from} to {valid_to}."
         )
     return (
-        f"Country: {product.country}. Approval status: {product.approval_status.value}. "
+        f"Country: {product.country} · Approval status: {product.approval_status.value}. "
         f"Valid from {valid_from} to {valid_to}."
     )
 
@@ -156,6 +157,12 @@ def _format_registration_summary(product: Product) -> str:
         f"This product is registered for {application_count} {crop_label} with an average efficacy of "
         f"{format_percent(calculate_product_average_efficacy(product.applications))}."
     )
+
+
+def _format_registration_prefix(product: Product) -> str:
+    application_count = len(product.applications)
+    crop_label = "crop" if application_count == 1 else "crops"
+    return f"This product is registered for {application_count} {crop_label} with an average efficacy of "
 
 
 def _map_applications(applications: list[Application]) -> list[dict]:

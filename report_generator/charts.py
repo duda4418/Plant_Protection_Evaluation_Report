@@ -16,15 +16,17 @@ def generate_efficacy_chart(product: Product, output_dir: Path) -> Path | None:
     crops = [application.crop for application in product.applications]
     values = [application.efficacy_percent for application in product.applications]
 
-    figure_height = max(2.6, 1.2 + 0.45 * len(crops))
-    figure, axis = plt.subplots(figsize=(7.2, figure_height))
-    bars = axis.barh(crops, values, color="#2f6f73")
+    figure_height = max(1.8, 0.95 + 0.38 * len(crops))
+    figure, axis = plt.subplots(figsize=(5.8, figure_height))
+    bars = axis.barh(crops, values, color="#17365D")
 
     axis.set_xlim(0, 100)
     axis.set_xlabel("Efficacy (%)")
-    axis.set_title(f"Efficacy by crop - {product.product_name}")
-    axis.grid(axis="x", linestyle="--", alpha=0.35)
+    axis.set_title(f"Efficacy by crop: {product.product_name}", color="#17365D", fontsize=10, pad=6)
+    axis.grid(False)
     axis.invert_yaxis()
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
 
     for bar, value in zip(bars, values, strict=True):
         axis.text(
@@ -32,7 +34,7 @@ def generate_efficacy_chart(product: Product, output_dir: Path) -> Path | None:
             bar.get_y() + bar.get_height() / 2,
             f"{value}%",
             va="center",
-            fontsize=9,
+            fontsize=8,
         )
 
     figure.tight_layout()

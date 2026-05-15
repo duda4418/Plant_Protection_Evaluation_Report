@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--template",
         type=Path,
         default=Path("templates/report_template.docx"),
-        help="Path to the DOCX template.",
+        help="Path to the manually maintained DOCX template.",
     )
     parser.add_argument(
         "--output",
@@ -43,7 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--rebuild-template",
         action="store_true",
-        help="Recreate the default DOCX template before rendering.",
+        help="Optionally regenerate a baseline DOCX template from code before rendering.",
     )
     return parser
 
@@ -62,8 +62,10 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def run(args: argparse.Namespace) -> None:
+    template_was_scaffolded = False
     if args.rebuild_template or not args.template.exists():
         build_default_template(args.template)
+        template_was_scaffolded = True
 
     raw_data = load_json(args.input)
     report = ReportInput.model_validate(raw_data)
@@ -76,7 +78,10 @@ def run(args: argparse.Namespace) -> None:
     render_report(context, args.template, args.output)
 
     print(f"Generated report: {args.output}")
-    print(f"Generated template: {args.template}")
+    if template_was_scaffolded:
+        print(f"Scaffolded template: {args.template}")
+    else:
+        print(f"Used template: {args.template}")
 
 
 def load_json(path: Path) -> dict:

@@ -2,12 +2,14 @@
 
 This repository contains a small document automation prototype for generating a regulator-style DOCX report from structured JSON data. It simulates an ActiveDocs-style workflow with Python tools that are available locally and easy to inspect.
 
+The primary workflow is a manually maintained Word template rendered with `docxtpl`. Python is responsible for validation, mapping, calculations, chart generation, and rendering. A code-generated template scaffold is still available as an optional fallback when the template needs to be bootstrapped from scratch.
+
 ## Technology Stack
 
 - Python 3.13
 - Pydantic for JSON schema validation and numeric constraints
 - docxtpl and Jinja2 for DOCX template rendering
-- python-docx for generating the reusable DOCX template structure
+- python-docx for optional DOCX template scaffolding and Word-level checks
 - matplotlib for efficacy charts
 
 ## One-Command Run
@@ -26,11 +28,15 @@ The command creates or updates these outputs:
 - `generated/report.docx`
 - `build/charts/*.png`
 
-To rebuild the template explicitly:
+If the template already exists, the command uses it as-is. If the template is missing, a baseline version is scaffolded automatically so the pipeline still runs from a clean clone.
+
+To regenerate the baseline template scaffold explicitly:
 
 ```powershell
 python -m report_generator --rebuild-template
 ```
+
+Use that option only when you want to recreate the code-generated starting point. If you have manually styled `templates/report_template.docx` in Word, run `python -m report_generator` without `--rebuild-template` so your manual template changes are preserved.
 
 To use a different JSON input:
 
@@ -53,11 +59,28 @@ JSON input
   -> Pydantic schema validation
   -> Python business rules and report view-model mapping
   -> matplotlib chart generation
+  -> manually authored Word template
   -> DOCX template rendering with docxtpl/Jinja2
   -> generated report.docx
 ```
 
 The implementation keeps a clear boundary between data preparation and document layout. Python validates, normalizes, calculates, and maps data into display-ready values. The DOCX template handles layout, repeated product sections, tables, simple conditions, and chart placement.
+
+## Template Workflow
+
+The preferred approach for this project is:
+
+- maintain `templates/report_template.docx` manually in Word for layout and styling
+- keep logic, flags, formatting, and calculations in Python
+- use `docxtpl` only to render placeholders, simple loops, and simple conditions
+
+This is closer to the way enterprise document automation tools such as ActiveDocs are typically used.
+
+The code-generated template scaffold exists for convenience:
+
+- it provides a runnable baseline from a clean clone
+- it captures a fallback layout in source control
+- it should not be treated as the primary template-authoring workflow once the Word template is being maintained manually
 
 ## Business Rules
 
@@ -89,7 +112,7 @@ Rendering uses Jinja2 `StrictUndefined`, so missing template variables fail fast
 
 ## Template Design
 
-The generated `templates/report_template.docx` includes:
+The maintained `templates/report_template.docx` includes:
 
 - Title page
 - Header with authority and report ID
@@ -125,5 +148,5 @@ The same principle applies in both approaches: validate and reshape data before 
 
 - PDF export is not included because reliable conversion usually depends on Word, LibreOffice, or a dedicated document service being available in the runtime environment.
 - Automated tests are intentionally skipped for now, per the current implementation request.
-- The template is generated programmatically so the project is reproducible without manual Word editing. It can still be opened and styled further in Word.
+- The template can be scaffolded programmatically for reproducibility, but the intended primary workflow is manual template authoring in Word.
 - Temporary chart image files are ignored by Git because they are regenerated on every run and embedded in the DOCX output.

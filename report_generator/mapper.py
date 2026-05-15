@@ -53,6 +53,7 @@ def map_report(report: ReportInput, chart_paths: dict[str, Path | None]) -> dict
             "conditional_count": conditional_count,
             "high_risk_count": high_risk_count,
             "overall_average_efficacy": format_percent(calculate_overall_average_efficacy(report.products)),
+            "summary_text": _format_summary_text(report.products, conditional_count),
         },
         "products": products,
         "footer": {
@@ -76,10 +77,12 @@ def _map_product(product: Product, chart_path: Path | None) -> dict:
             product.active_substance_concentration.unit,
         ),
         "formulation": f"{product.formulation_type} - {product.formulation_type_long}",
+        "formulation_display": f"{product.formulation_type_long} ({product.formulation_type})",
         "manufacturer": product.manufacturer,
         "country": product.country,
         "approval_status": product.approval_status.value,
         "approval_line": _format_approval_line(product, is_german),
+        "approval_summary": _format_approval_summary(product, is_german),
         "risk_score": product.risk_score,
         "show_high_risk_notice": should_show_high_risk_notice(product.risk_score),
         "high_risk_notice": _format_high_risk_notice(product, is_german),
@@ -88,6 +91,7 @@ def _map_product(product: Product, chart_path: Path | None) -> dict:
         "restrictions": restrictions,
         "application_count": len(product.applications),
         "average_efficacy": format_percent(calculate_product_average_efficacy(product.applications)),
+        "registration_summary": _format_registration_summary(product),
         "applications": _map_applications(product.applications),
         "toxicity_rows": _map_toxicity_rows(product),
         "risk_component_rows": _map_risk_component_rows(product),
@@ -100,6 +104,14 @@ def _map_product(product: Product, chart_path: Path | None) -> dict:
         "chart_note": "" if chart_path else "No efficacy data available.",
         "efficacy_chart": "",
     }
+
+
+def _format_summary_text(products: list[Product], conditional_count: int) -> str:
+    product_label = "product" if len(products) == 1 else "products"
+    return (
+        f"This report covers {len(products)} {product_label}; {conditional_count} of them under conditional approval. "
+        f"Average efficacy across all applications: {format_percent(calculate_overall_average_efficacy(products))}."
+    )
 
 
 def _format_approval_line(product: Product, is_german: bool) -> str:
@@ -116,15 +128,33 @@ def _format_approval_line(product: Product, is_german: bool) -> str:
     )
 
 
-def _format_high_risk_notice(product: Product, is_german: bool) -> str:
+def _format_approval_summary(product: Product, is_german: bool) -> str:
+    valid_from = format_date(product.approval_period.valid_from)
+    valid_to = format_date(product.approval_period.valid_to)
     if is_german:
         return (
-            "HIGH RISK NOTICE / HOCHRISIKO-HINWEIS: This product exceeds the high-risk threshold "
-            f"with a risk score of {product.risk_score}. Additional regulatory review is required."
+            f"Germany: Zugelassen gem. PflSchG - Status: {product.approval_status.value}. "
+            f"Valid from {valid_from} to {valid_to}."
         )
     return (
-        "HIGH RISK NOTICE: This product exceeds the high-risk threshold "
-        f"with a risk score of {product.risk_score}. Additional regulatory review is required."
+        f"Country: {product.country}. Approval status: {product.approval_status.value}. "
+        f"Valid from {valid_from} to {valid_to}."
+    )
+
+
+def _format_high_risk_notice(product: Product, is_german: bool) -> str:
+    return (
+        f"This product carries a composite risk score of {product.risk_score} out of 100 and requires elevated "
+        "regulatory scrutiny. Consult the Restrictions section before authorising any application."
+    )
+
+
+def _format_registration_summary(product: Product) -> str:
+    application_count = len(product.applications)
+    crop_label = "crop" if application_count == 1 else "crops"
+    return (
+        f"This product is registered for {application_count} {crop_label} with an average efficacy of "
+        f"{format_percent(calculate_product_average_efficacy(product.applications))}."
     )
 
 

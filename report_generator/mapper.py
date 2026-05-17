@@ -11,6 +11,7 @@ from .formatting import (
     format_metric_name,
     format_percent,
 )
+from . import __version__
 from .models import Application, Product, ReportInput
 from .rules import is_german_country, should_show_high_risk_notice, should_show_restrictions
 
@@ -59,6 +60,7 @@ def map_report(report: ReportInput, chart_paths: dict[str, Path | None]) -> dict
         "footer": {
             "classification": format_classification(report.footer.classification),
             "disclaimer": report.footer.disclaimer,
+            "generator_version": __version__,
         },
     }
 

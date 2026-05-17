@@ -52,9 +52,11 @@ def _add_header_footer(document: Document) -> None:
     footer_table = section.footer.add_table(rows=1, cols=2, width=Inches(6.3))
     left_cell = footer_table.rows[0].cells[0]
     right_cell = footer_table.rows[0].cells[1]
-    left_cell.text = "{{ footer.classification }}"
-    for run in left_cell.paragraphs[0].runs:
-        style_run(run, color=TEXT_MUTED, size=7)
+    left_cell.paragraphs[0].clear()
+    left_class_run = left_cell.paragraphs[0].add_run("{{ footer.classification }}")
+    style_run(left_class_run, color=TEXT_MUTED, size=7)
+    left_ver_run = left_cell.paragraphs[0].add_run(" · v{{ footer.generator_version }}")
+    style_run(left_ver_run, color=TEXT_MUTED, size=7)
     right_paragraph = right_cell.paragraphs[0]
     right_paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     footer_text = right_paragraph.add_run("Page ")

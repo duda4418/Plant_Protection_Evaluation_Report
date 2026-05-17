@@ -6,7 +6,7 @@ The primary workflow is a manually maintained Word template rendered with `docxt
 
 ## Technology Stack
 
-- Python 3.13
+- Python 3.12
 - Pydantic for JSON schema validation and numeric constraints
 - docxtpl and Jinja2 for DOCX template rendering
 - python-docx for optional DOCX template scaffolding and Word-level checks
@@ -41,8 +41,22 @@ Use that option only when you want to recreate the code-generated starting point
 To use a different JSON input:
 
 ```powershell
-python -m report_generator --input path\to\input_data.json --output generated\custom_report.docx
+python -m report_generator  --template templates\manual_template.docx --output generated\custom_report.docx
 ```
+
+## CLI Reference
+
+```
+python -m report_generator [OPTIONS]
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `--input PATH` | `data/input_data.json` | Path to the JSON input file. |
+| `--template PATH` | `templates/report_template.docx` | Path to the DOCX template to render. |
+| `--output PATH` | `generated/report.docx` | Destination path for the generated report. |
+| `--charts-dir PATH` | `build/charts` | Directory where chart images are written. |
+| `--rebuild-template` | *(flag)* | Regenerate the baseline template from code before rendering. Overwrites the existing template file. |
 
 ## Input and Output Paths
 
@@ -73,8 +87,6 @@ The preferred approach for this project is:
 - maintain `templates/report_template.docx` manually in Word for layout and styling
 - keep logic, flags, formatting, and calculations in Python
 - use `docxtpl` only to render placeholders, simple loops, and simple conditions
-
-This is closer to the way enterprise document automation tools such as ActiveDocs are typically used.
 
 The code-generated template scaffold exists for convenience:
 
@@ -116,7 +128,7 @@ The maintained `templates/report_template.docx` includes:
 
 - Title page
 - Header with authority and report ID
-- Footer with classification, disclaimer, and Word page fields
+- Footer with classification, generator version, disclaimer, and Word page fields
 - Executive summary table
 - Reusable product section rendered once per product
 - Applications table
@@ -144,9 +156,18 @@ The main reusable component is the product loop. This mirrors how the same desig
 
 The same principle applies in both approaches: validate and reshape data before rendering, keep business rules explicit and testable, and keep template sections reusable.
 
+## Generator Versioning
+
+The package version is declared in `report_generator/__init__.py`:
+
+```python
+__version__ = "1.0.0"
+```
+
+This value is injected into every generated report via the footer (`INTERNAL · v1.0.0`). Bumping `__version__` before a run is enough to make all subsequent reports traceable to the exact code that produced them. No other files need to change.
+
 ## Known Limitations
 
-- PDF export is not included because reliable conversion usually depends on Word, LibreOffice, or a dedicated document service being available in the runtime environment.
 - Automated tests are intentionally skipped for now, per the current implementation request.
 - The template can be scaffolded programmatically for reproducibility, but the intended primary workflow is manual template authoring in Word.
 - Temporary chart image files are ignored by Git because they are regenerated on every run and embedded in the DOCX output.

@@ -44,7 +44,7 @@ def _add_header_footer(document: Document) -> None:
     header_run = header.add_run("{{ metadata.issuing_authority }}")
     style_run(header_run, color=TEXT_MUTED, size=7)
     separator_run = header.add_run(" | {{ metadata.report_id }}")
-    style_run(separator_run, color=TEXT_MUTED, size=8)
+    style_run(separator_run, color=TEXT_MUTED, size=10)
     header.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     footer = section.footer.paragraphs[0]
@@ -89,16 +89,11 @@ def _add_field(paragraph, instruction: str) -> None:
 # Front matter
 def _add_title_page(document: Document) -> None:
     spacer = document.add_paragraph()
-    spacer.paragraph_format.space_before = Pt(28)
-    spacer.paragraph_format.space_after = Pt(0)
 
     title = document.add_paragraph(style="Title")
-    title.paragraph_format.space_before = Pt(0)
-    title.paragraph_format.space_after = Pt(5)
     title.add_run("{{ metadata.report_title }}")
 
     metadata_line = document.add_paragraph()
-    metadata_line.paragraph_format.space_after = Pt(14)
     metadata_line_run = metadata_line.add_run(
         "Issuing authority: {{ metadata.issuing_authority }} · Report ID: {{ metadata.report_id }} · Issued on: {{ metadata.issued_on }} (v{{ metadata.version }})"
     )
@@ -110,9 +105,9 @@ def _add_title_page(document: Document) -> None:
     summary_cell = summary_box.rows[0].cells[1]
     summary_cell.paragraphs[0].clear()
     summary_bold_run = summary_cell.paragraphs[0].add_run("Overall summary.")
-    style_run(summary_bold_run, color=TEXT_DARK, size=8, bold=True)
+    style_run(summary_bold_run, color=TEXT_DARK, size=10, bold=True)
     summary_text_run = summary_cell.paragraphs[0].add_run(" {{ summary.summary_text }}")
-    style_run(summary_text_run, color=TEXT_DARK, size=8)
+    style_run(summary_text_run, color=TEXT_DARK, size=10)
     style_summary_table(summary_box)
 
     document.add_page_break()
@@ -126,17 +121,11 @@ def _add_products_section(document: Document) -> None:
     document.add_paragraph("{%p endif %}")
     heading = document.add_heading("{{ product.name }}", level=1)
     set_paragraph_bottom_border(heading, "D9D9D9")
-    _add_product_overview(document)
     _add_high_risk_notice(document)
+    _add_product_overview(document)
     _add_product_data_sections(document)
-    document.add_paragraph("{%p if product.show_high_risk_notice %}")
-    document.add_page_break()
-    document.add_paragraph("{%p endif %}")
     _add_chart_section(document)
     _add_restrictions_section(document)
-    document.add_paragraph("{%p if not product.show_restrictions %}")
-    document.add_page_break()
-    document.add_paragraph("{%p endif %}")
     _add_environmental_notes_section(document)
     document.add_paragraph("{%p endfor %}")
 
@@ -144,39 +133,40 @@ def _add_products_section(document: Document) -> None:
 # Product overview
 def _add_product_overview(document: Document) -> None:
     facts = document.add_paragraph()
-    facts.paragraph_format.space_after = Pt(2)
     facts.add_run("Active substance: ")
     active_sub_run = facts.add_run("{{ product.active_substance }}")
-    style_run(active_sub_run, color=TEXT_DARK, size=8, bold=True)
+    style_run(active_sub_run, color=TEXT_DARK, size=10, bold=True)
     facts.add_run(" ({{ product.concentration }}) · Formulation: {{ product.formulation_display }} · Manufacturer: {{ product.manufacturer }}")
 
     approval = document.add_paragraph()
-    approval.paragraph_format.space_after = Pt(8)
     approval_run = approval.add_run("{{ product.approval_summary }}")
-    style_run(approval_run, color=BRAND_NAVY, size=8)
+    style_run(approval_run, color=BRAND_NAVY, size=10)
     approval_run.italic = True
 
     registration = document.add_paragraph()
-    registration.paragraph_format.space_after = Pt(12)
     reg_prefix_run = registration.add_run("{{ product.registration_prefix }}")
-    style_run(reg_prefix_run, color=TEXT_DARK, size=8)
+    style_run(reg_prefix_run, color=TEXT_DARK, size=10)
     reg_bold_run = registration.add_run("{{ product.average_efficacy }}")
-    style_run(reg_bold_run, color=TEXT_DARK, size=8, bold=True)
+    style_run(reg_bold_run, color=TEXT_DARK, size=10, bold=True)
     reg_suffix_run = registration.add_run(".")
-    style_run(reg_suffix_run, color=TEXT_DARK, size=8)
+    style_run(reg_suffix_run, color=TEXT_DARK, size=10)
 
 
 def _add_high_risk_notice(document: Document) -> None:
     document.add_paragraph("{%p if product.show_high_risk_notice %}")
+    spacer_before = document.add_paragraph()
+    spacer_before.paragraph_format.space_before = Pt(0)
+    spacer_before.paragraph_format.space_after = Pt(4)
     notice_table = document.add_table(rows=1, cols=1)
     notice_table.style = "Table Grid"
     notice_cell = notice_table.rows[0].cells[0]
     notice_cell.text = ""
     notice_heading = notice_cell.paragraphs[0].add_run("HIGH RISK NOTICE")
-    style_run(notice_heading, color=DARK_RED, size=8, bold=True)
+    style_run(notice_heading, color=DARK_RED, size=10, bold=True)
     notice_body = notice_cell.add_paragraph().add_run("{{ product.high_risk_notice }}")
-    style_run(notice_body, color="1A1A1A", size=8)
+    style_run(notice_body, color="1A1A1A", size=10)
     style_warning_cell(notice_cell)
+    spacer = document.add_paragraph()
     document.add_paragraph("{%p endif %}")
 
 
@@ -185,15 +175,18 @@ def _add_product_data_sections(document: Document) -> None:
     document.add_heading("Applications", level=2)
     _add_applications_table(document)
 
-    document.add_heading("Toxicity Indicators", level=2)
+    h = document.add_heading("Toxicity Indicators", level=2)
+    h.paragraph_format.space_before = Pt(16)
     _add_toxicity_table(document)
 
-    document.add_heading("Risk Components", level=2)
+    h = document.add_heading("Risk Components", level=2)
+    h.paragraph_format.space_before = Pt(16)
     _add_risk_table(document)
 
 
 def _add_chart_section(document: Document) -> None:
-    document.add_heading("Efficacy by crop", level=2)
+    h = document.add_heading("Efficacy by crop", level=2)
+    h.paragraph_format.space_before = Pt(16)
     chart_paragraph = document.add_paragraph()
     chart_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     chart_paragraph.add_run("{{ product.efficacy_chart }}")
@@ -211,7 +204,7 @@ def _add_restrictions_section(document: Document) -> None:
 
 
 def _add_environmental_notes_section(document: Document) -> None:
-    document.add_heading("Environmental notes", level=2)
+    document.add_heading("{{ product.environmental_notes_heading }}", level=2)
     document.add_paragraph("{%p for note in product.environmental_notes %}")
     document.add_paragraph("• {{ note }}")
     document.add_paragraph("{%p endfor %}")

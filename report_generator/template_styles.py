@@ -74,7 +74,7 @@ def style_summary_table(table) -> None:
     shade_cell(body_cell, LIGHT_GREY)
     set_cell_border(body_cell, LIGHT_GREY)
     set_cell_margins(body_cell, top=120, start=140, bottom=120, end=120)
-    style_cell_text(body_cell, color=TEXT_DARK, bold=False, size=8)
+    style_cell_text(body_cell, color=TEXT_DARK, bold=False, size=10)
 
 
 def style_key_value_table(table) -> None:
@@ -86,7 +86,7 @@ def style_key_value_table(table) -> None:
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             set_cell_border(cell, MID_GREY)
             set_cell_margins(cell)
-            style_cell_text(cell, color=TEXT_DARK, bold=index == 0, size=8)
+            style_cell_text(cell, color=TEXT_DARK, bold=index == 0, size=10)
             shade_cell(cell, HEADER_GREY if index == 0 else "FFFFFF")
 
 
@@ -125,7 +125,7 @@ def style_warning_cell(cell) -> None:
     shade_cell(cell, PALE_RED)
     set_cell_border(cell, BRAND_ORANGE)
     set_cell_margins(cell, top=110, start=120, bottom=110, end=120)
-    style_cell_text(cell, color=TEXT_DARK, bold=False, size=8)
+    style_cell_text(cell, color=TEXT_DARK, bold=False, size=10)
 
 
 def style_cell_text(cell, *, color: str, bold: bool, size: int = 8, italic: bool = False) -> None:

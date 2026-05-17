@@ -34,7 +34,7 @@ def generate_efficacy_chart(product: Product, output_dir: Path) -> Path | None:
             bar.get_y() + bar.get_height() / 2,
             f"{value}%",
             va="center",
-            fontsize=8,
+            fontsize=10,
         )
 
     figure.tight_layout()

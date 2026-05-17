@@ -4,13 +4,6 @@ This repository contains a small document automation prototype for generating a 
 
 The primary workflow is a manually maintained Word template rendered with `docxtpl`. Python is responsible for validation, mapping, calculations, chart generation, and rendering. A code-generated template scaffold is still available as an optional fallback when the template needs to be bootstrapped from scratch.
 
-## Technology Stack
-
-- Python 3.12
-- Pydantic for JSON schema validation and numeric constraints
-- docxtpl and Jinja2 for DOCX template rendering
-- python-docx for optional DOCX template scaffolding and Word-level checks
-- matplotlib for efficacy charts
 
 ## One-Command Run
 
@@ -141,20 +134,6 @@ The maintained `templates/report_template.docx` includes:
 
 The main reusable component is the product loop. This mirrors how the same design would become a reusable subtemplate or component in an enterprise document automation tool.
 
-## ActiveDocs Translation
-
-| Prototype concept | ActiveDocs equivalent |
-|---|---|
-| `input_data.json` | External data source / JSON / XML input |
-| Pydantic models | Input schema and data contract |
-| Python mapper | Data preparation and transformation layer |
-| Jinja conditions | ActiveDocs business rules |
-| Jinja loops | Repeating sections |
-| DOCX template | ActiveDocs template |
-| Product loop | Reusable subtemplate/component |
-| Generated DOCX | Generated document package |
-
-The same principle applies in both approaches: validate and reshape data before rendering, keep business rules explicit and testable, and keep template sections reusable.
 
 ## Generator Versioning
 
@@ -166,8 +145,29 @@ __version__ = "1.0.0"
 
 This value is injected into every generated report via the footer (`INTERNAL · v1.0.0`). Bumping `__version__` before a run is enough to make all subsequent reports traceable to the exact code that produced them. No other files need to change.
 
-## Known Limitations
+## Technology Stack
 
-- Automated tests are intentionally skipped for now, per the current implementation request.
-- The template can be scaffolded programmatically for reproducibility, but the intended primary workflow is manual template authoring in Word.
-- Temporary chart image files are ignored by Git because they are regenerated on every run and embedded in the DOCX output.
+- Python 3.12
+- Pydantic for JSON schema validation and numeric constraints
+- docxtpl and Jinja2 for DOCX template rendering
+- python-docx for optional DOCX template scaffolding and Word-level checks
+- matplotlib for efficacy charts
+
+## Future Improvements
+
+**Automated test suite**
+There are currently no automated tests. A `pytest` suite should be added covering:
+- unit tests for every function in `formatting.py` and `rules.py`
+- Pydantic model validation edge cases (invalid dates, duplicates, out-of-range scores)
+- mapper output for known input fixtures
+- an integration test that runs the full pipeline against a reference JSON and diffs the generated DOCX structure
+
+**Logging and traceability**
+The CLI currently prints two lines to stdout. A proper logging layer (`logging` module, configurable via `--log-level`) would record each pipeline stage with timestamps, the input file hash, the template path used, and the generator version. This makes it straightforward to audit which run produced a given report.
+
+**Schema versioning**
+Add a `schema_version` field to the input JSON and validate it explicitly so that a data file produced for an older schema is rejected with a clear message rather than a confusing field error.
+
+
+
+

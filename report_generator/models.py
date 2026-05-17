@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class ApprovalStatus(StrEnum):
@@ -35,6 +35,14 @@ class Concentration(StrictModel):
 class ApprovalPeriod(StrictModel):
     valid_from: date
     valid_to: date
+
+    @model_validator(mode="after")
+    def check_date_order(self) -> "ApprovalPeriod":
+        if self.valid_from > self.valid_to:
+            raise ValueError(
+                f"valid_from ({self.valid_from}) must not be after valid_to ({self.valid_to})"
+            )
+        return self
 
 
 class RiskComponents(StrictModel):
@@ -87,6 +95,15 @@ class Product(StrictModel):
     environmental_notes: list[str] = Field(default_factory=list)
     references: list[Reference] = Field(default_factory=list)
 
+    @field_validator("restrictions", "environmental_notes", mode="before")
+    @classmethod
+    def validate_string_list_items(cls, v: object) -> object:
+        if isinstance(v, list):
+            for i, item in enumerate(v):
+                if not isinstance(item, str) or not str(item).strip():
+                    raise ValueError(f"item {i} must be a non-empty string")
+        return v
+
     @field_validator("country", mode="before")
     @classmethod
     def normalize_country(cls, value: str) -> str:
@@ -110,3 +127,14 @@ class ReportInput(StrictModel):
     report_metadata: ReportMetadata
     products: list[Product] = Field(min_length=1)
     footer: Footer
+
+    @model_validator(mode="after")
+    def check_unique_product_ids(self) -> "ReportInput":
+        ids = [p.product_id for p in self.products]
+        seen: set[str] = set()
+        duplicates = {pid for pid in ids if pid in seen or seen.add(pid)}  # type: ignore[func-returns-value]
+        if duplicates:
+            raise ValueError(
+                f"product_id values must be unique; duplicates found: {', '.join(sorted(duplicates))}"
+            )
+        return self

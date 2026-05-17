@@ -90,8 +90,13 @@ def load_json(path: Path) -> dict:
 
     try:
         with path.open("r", encoding="utf-8") as input_file:
-            return json.load(input_file)
+            data = json.load(input_file)
     except JSONDecodeError as error:
         raise CliError(
             f"Invalid JSON in {path}: {error.msg} at line {error.lineno}, column {error.colno}"
         ) from error
+    if not isinstance(data, dict):
+        raise CliError(
+            f"Input JSON must be a JSON object ({{...}}), got {type(data).__name__}"
+        )
+    return data

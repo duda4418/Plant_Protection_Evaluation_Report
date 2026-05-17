@@ -10,6 +10,7 @@ The primary workflow is a manually maintained Word template rendered with `docxt
 From the repository root:
 
 ```powershell
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m report_generator
